@@ -1,0 +1,17 @@
+.table{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.canvas{
+    margin-top: 1rem;
+}
+
+.form{
+    margin-top: 1rem;
+}
+
+.form-control {
+    width: 80%;
+    display: inline-block;
+}

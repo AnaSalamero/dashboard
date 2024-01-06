@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %} - Calculate{% endblock %} 
+
+{% block content %}
+
+<form class="form" method="post" autocomplete="off">
+
+    <select required class="form-control" name="country" method="GET" action="/">
+            <option selected value>Choose a country...</option>
+            {% for country in countries %}
+            <option value="{{country}}">{{country}}</option>
+            {% endfor %}
+    </select>
+
+    <br>
+    <br>
+
+    <input class="form-control" type="number" id="resources" name="resources" placeholder="Resources" step="any" required/>
+
+    <br>
+    <br>
+
+    <input class="form-control" type="number" id="tasks" name="tasks" placeholder="Tasks completed"required/>
+
+    <br>
+    <br>
+
+    <input class="form-control" type="date" id="date" name="date" placeholder="Date" required/>
+
+    <br>
+    <br>
+
+    <input type="submit" class="btn btn-outline-primary" value="Calculate">
+
+
+</form>
+
+<script>
+    date.max = new Date().toISOString().split("T")[0];
+</script>
+
+{% endblock %}
+
+
+
+
+  
+    

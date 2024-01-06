@@ -1,0 +1,5 @@
+env
+config.py
+.terraform
+.terraform.lock.hcl
+.terraform.tfstat.backup

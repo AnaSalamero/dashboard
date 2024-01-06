@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block extrahead %}<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>{% endblock %}
+
+{% block content %}
+
+<canvas class="canvas" id="myChart" width="600" height="400"></canvas>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Country</th>
+      <th scope="col">Resources</th>
+      <th scope="col">Tasks resolved</th>
+      <th scope="col">Date</th>
+      <th scope="col">Productivity</th>
+    </tr>
+  </thead>
+  {% for row in country_all_data %}
+    <tr>
+      {% for c in row %}
+        <td>{{ c }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+
+<script>
+
+var myCanvas = document.getElementById("myChart");
+
+
+var dataCountry = {
+    label: "{{country}} productivity",
+    data: {{country_productivity}},
+    lineTension: 0,
+    fill: false,
+    backgroundColor: '#0d6efd',
+    borderColor: '#0d6efd'
+  };
+
+var speedData = {
+  labels: {{labels | safe}},
+  datasets: [dataCountry]
+};
+
+var chartOptions = {
+  legend: {
+    display: true,
+    position: 'top',
+    labels: {
+      boxWidth: 80,
+      fontColor: 'black'
+    }
+  }
+};
+
+var lineChart = new Chart(myCanvas, {
+  type: 'line',
+  data: speedData,
+  options: chartOptions
+});
+
+</script>
+
+{% endblock %}

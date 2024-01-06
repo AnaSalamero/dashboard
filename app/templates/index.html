@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block extrahead %} <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>{% endblock %}
+
+{% block content %}
+
+<canvas id="myChart" width="600" height="400"></canvas>
+
+
+<div class="row">
+  <div class="col-sm-6">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Country</th>
+          <th scope="col">Resources</th>
+          <th scope="col">Tasks resolved</th>
+          <th scope="col">Date</th>
+          <th scope="col">Productivity</th>
+        </tr>
+      </thead>
+      {% for row in SPA_country_all_data %}
+        <tr>
+          {% for c in row %}
+            <td>{{ c }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="col-sm-6">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Country</th>
+          <th scope="col">Resources</th>
+          <th scope="col">Tasks resolved</th>
+          <th scope="col">Date</th>
+          <th scope="col">Productivity</th>
+        </tr>
+      </thead>
+      {% for row in FRA_country_all_data %}
+        <tr>
+          {% for c in row %}
+            <td>{{ c }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="col-sm-6">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Country</th>
+          <th scope="col">Resources</th>
+          <th scope="col">Tasks resolved</th>
+          <th scope="col">Date</th>
+          <th scope="col">Productivity</th>
+        </tr>
+      </thead>
+      {% for row in UK_country_all_data %}
+        <tr>
+          {% for c in row %}
+            <td>{{ c }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+</div>
+
+
+<script>
+
+var myCanvas = document.getElementById("myChart");
+
+var dataSPA = {
+    label: "SPA prod",
+    data: {{SPA_country_productivity}},
+    lineTension: 0,
+    fill: false,
+    backgroundColor: '#dc3545',
+    borderColor: '#dc3545'
+  };
+
+var dataFRA = {
+    label: "FRA prod",
+    data: {{FRA_country_productivity}},
+    lineTension: 0,
+    fill: false,
+    backgroundColor: '#198754',
+    borderColor: '#198754'
+  };
+
+var dataUK = {
+    label: "UK prod",
+    data: {{UK_country_productivity}},
+    lineTension: 0,
+    fill: false,
+    backgroundColor: 'blue',
+    borderColor: 'blue'
+  };
+
+var speedData = {
+  labels: {{labels | safe}},
+  // jinja escapes spacial characters that are control sequences for html
+  datasets: [dataSPA, dataFRA, dataUK]
+};
+
+var chartOptions = {
+  legend: {
+    display: true,
+    position: 'top',
+    labels: {
+      boxWidth: 80,
+      fontColor: 'black'
+    }
+  }
+};
+
+var lineChart = new Chart(myCanvas, {
+  type: 'line',
+  data: speedData,
+  options: chartOptions
+});
+
+</script>
+
+{% endblock %}

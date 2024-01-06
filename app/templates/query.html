@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %} - Query a country {% endblock %}
+
+{% block content %}
+
+<form class="form" action="" method="post" autocomplete="off">
+
+<div> 
+    <select required class="form-control" name="country" method="GET" action="/">
+        <option selected value>Choose a country...</option>
+        {% for country in countries %}
+        <option value="{{country}}">{{country}}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" class="btn btn-outline-primary" value="Submit">
+</div>
+
+</form>
+
+{% endblock %}
+
+
