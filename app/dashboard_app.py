@@ -1,11 +1,44 @@
 from flask import Flask, render_template, url_for, request
 from flask_mysqldb import MySQL
+from flask_basicauth import BasicAuth
 
 import datetime
+import csv
 
-app = Flask(__name__)
+def init_database(app):
+   with app.app_context():
+      cursor = mysql.connection.cursor()
+      cursor.execute('''
+          create table if not exists dashboard (
+              id int not null auto_increment primary key,
+              center varchar(20),
+              resources int,
+              tasks int,
+              date date,
+              productivity float,
+              constraint uc_country_date unique (center,date)
+              )   
+      ''')
+      # load sample data
+      csv_data = csv.reader(open('static/sampledata.csv'))
+      cursor = mysql.connection.cursor()
+      for row in csv_data:
+            cursor.execute("insert into dashboard (id,center,resources,tasks,date,productivity) values (%s, %s, %s, %s, %s, %s) as new on duplicate key update center = new.center, resources = new.resources, tasks = new.tasks, date = new.date, productivity = new.productivity", row)
+      mysql.connection.commit()
+      cursor.close()
 
-app.config.from_pyfile("config.py")
+def create_app():
+    global mysql
+    app = Flask(__name__)
+    app.config.from_pyfile("config.py")
+    mysql = MySQL(app)
+    init_database(app)
+    return app
+
+
+app = create_app()
+
+basic_auth = BasicAuth(app)
 
 # configuration values
 app.config['COUNTRIES'] = ['SPA', 'UK', 'FRA']
@@ -30,7 +63,6 @@ app.config['UK_TASKS_DEFAULT'] = 8
 
 app.config['GENERATION_PRODUCTIVITY_START_DATE'] = datetime.date(2023,11,1)
 
-mysql = MySQL(app)
 
 # calculates productivity through 3 variables
 def calc_productivity(country, resources, task_resolved):
@@ -54,7 +86,7 @@ def calc_productivity(country, resources, task_resolved):
 # fetch all data available from a country ordered by date
 def fetch_data_bycountry(country):
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT center,resources,tasks,date,productivity from dashboard2 where center=%s order by date", (country,))
+    cursor.execute("SELECT center,resources,tasks,date,productivity from dashboard where center=%s order by date", (country,))
     all = cursor.fetchall()
     cursor.close()
     return all
@@ -62,7 +94,7 @@ def fetch_data_bycountry(country):
 # fetch all productivity values available from a country ordered by date
 def fetch_productivity_bycountry(country):
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT productivity from dashboard2 where center=%s order by date", (country,))
+    cursor.execute("SELECT productivity from dashboard where center=%s order by date", (country,))
     all = cursor.fetchall()
     cursor.close()
     #we get an array of arrays, so we transform it into an array
@@ -81,7 +113,7 @@ def make_date_list():
 # solve problem of graphic misrepresentation when you want to see more than 1 country in the graphic and there is no data available in x dates
 def generate_productivity_by_country(country):
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT date,productivity from dashboard2 where center=%s order by date", (country,))
+    cursor.execute("SELECT date,productivity from dashboard where center=%s order by date", (country,))
     all = cursor.fetchall()
     cursor.close()
     date_times_stored = [row[0] for row in all]
@@ -125,7 +157,7 @@ def insert():
 
         cursor = mysql.connection.cursor()
         try:
-            cursor.execute("INSERT into dashboard2 (center, resources, tasks, date, productivity) VALUES (%s,%s,%s,%s,%s)", (country, resources, tasks, date, productivity))
+            cursor.execute("INSERT into dashboard (center, resources, tasks, date, productivity) VALUES (%s,%s,%s,%s,%s)", (country, resources, tasks, date, productivity))
             mysql.connection.commit()
             print(cursor.rowcount, "was inserted")
         except cursor.Error:

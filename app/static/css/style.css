@@ -15,3 +15,8 @@
     width: 80%;
     display: inline-block;
 }
+
+.containerwrap {
+display: flex;
+flex-wrap: wrap;
+}
