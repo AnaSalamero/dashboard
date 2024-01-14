@@ -2,4 +2,6 @@ env
 config.py
 .terraform
 .terraform.lock.hcl
-.terraform.tfstat.backup
+.terraform.tfstate.backup
+.terraform.tfstate
+.secrets.tfvars
